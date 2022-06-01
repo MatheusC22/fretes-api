@@ -9,12 +9,12 @@ const VehicleSchema = new mongoose.Schema({
     description:{
         type: String,
         unique: false,
-        required: false
+        required: false,
     },
-    licenseplate:{
+    licensePlate:{
         type: String,
-        unique:true,
-        required: true
+        unique:false,
+        required: true,
     },
     manufacturingYear:{
         type:Number,
