@@ -1,7 +1,7 @@
 
 const mongoose = require('mongoose');
-//mongoose.connect('mongodb+srv://ponto-api:ponto-api-key@cluster0.a7mwr.mongodb.net/ponto-turisticos?retryWrites=true&w=majority'); 
-mongoose.connect('mongodb://127.0.0.1:27017/frete-db');
+mongoose.connect('mongodb+srv://frete_admin:frete123@frete-db.ay5da.mongodb.net/?retryWrites=true&w=majority'); 
+//mongoose.connect('mongodb://127.0.0.1:27017/frete-db');
 
 mongoose.Promise = global.Promise;
 
