@@ -44,12 +44,11 @@ router.put("/update/:_id", async (req, res) => {
     return res.status(400).send({ error: err.message });
   }
 });
-/*Deletes driver By _id*/
-router.delete("/delete", async (req, res) => {
-  const { _id } = req.body;
+/*Deletes driver By _id ->PASSAR ID POR PARAMS<-*/
+router.delete("/delete/:_id", async (req, res) => {
 
   try {
-    const deleted = await Driver.findOneAndDelete({ _id: _id });
+    const deleted = await Driver.findByIdAndDelete(req.params._id);
 
     if (deleted == null) {
       return res.status(400).send({ error: "driver does not exist!" });
@@ -59,14 +58,13 @@ router.delete("/delete", async (req, res) => {
     return res.status(400).send({ error: err.message });
   }
 });
-/*Find One by _id*/
-router.post("/getById", async (req, res) => {
-  const { _id } = req.body;
+/*Find One by _id ->PASSAR ID POR PARAMS<-*/
+router.post("/get/:_id", async (req, res) => {
 
-  if (!(await Driver.findOne({ _id :_id}))) {
-    return res.status(400).send({ error: "driver does not exists!" });
+  if (!(await Driver.findById(req.params._id))) {
+    return res.status(400).send({ error: "driver does not exist!" });
   }
-  const get = await Driver.findOne({ _id : _id});
+  const get = await Driver.findById(req.params._id);
 
   return res.status(200).send({ get });
 });

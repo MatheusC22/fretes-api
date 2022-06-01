@@ -2,11 +2,12 @@ const express = require("express");
 const Vehicle = require("../models/Vehicle");
 
 const router = express.Router();
-
+/** get all vehicles */
 router.get("/all", async (req, res) => {
   const all = await Vehicle.find({});
   return res.status(200).send({ all });
 });
+/**registers a vehicle */
 router.post("/register", async (req, res) => {
   const { licensePlate } = req.body;
   try {
@@ -20,10 +21,10 @@ router.post("/register", async (req, res) => {
     return res.status(400).send({ error: err.message });
   }
 });
-router.delete("/delete", async (req, res) => {
-  const { _id } = req.body;
+/**delete a vehicle by id ->PASSAR ID POR PARAMS<- */
+router.delete("/delete/:_id", async (req, res) => {
   try {
-    const deleted = await Vehicle.findOneAndDelete({ _id: _id });
+    const deleted = await Vehicle.findByIdAndDelete(req.params._id);
 
     if (deleted == null) {
       return res.status(400).send({ error: "Vehicle does not exist!" });
@@ -33,7 +34,7 @@ router.delete("/delete", async (req, res) => {
     return res.status(400).send({ error: err.message });
   }
 });
-
+/**updates a vehicle by id ->PASSAR ID POR PARAMS<- */
 router.put("/update/:_id", async (req, res) => {
   const { name, description, licensePlate, manufacturingYear } = req.body;
   try {
@@ -56,13 +57,13 @@ router.put("/update/:_id", async (req, res) => {
     return res.status(400).send({ error: err.message });
   }
 });
-router.get("/getById", async (req, res) => {
-  const { _id } = req.body;
+/**get a vehicle by id ->PASSAR ID POR PARAMS<- */
+router.get("/get/:_id", async (req, res) => {
 
-  if (!(await Vehicle.findOne({ _id: _id }))) {
+  if (!(await Vehicle.findById(req.params._id))) {
     return res.status(400).send({ error: "Vehicle does not exists!" });
   }
-  const get = await Vehicle.findOne({ _id: _id });
+  const get = await Vehicle.findById(req.params._id);
 
   return res.status(200).send({ get });
 });
