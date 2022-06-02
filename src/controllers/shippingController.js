@@ -55,11 +55,15 @@ router.put("/update/:_id", async (req, res) => {
   try {
     const { driver, vehicle, description, cargo } = req.body;
 
-    const updated = await Shipping.findByIdAndUpdate(req.params._id, {
-      driver,
-      vehicle,
-      description,
-    },{new : true});
+    const updated = await Shipping.findByIdAndUpdate(
+      req.params._id,
+      {
+        driver,
+        vehicle,
+        description,
+      },
+      { new: true }
+    );
     updated.cargo = [];
     await Cargo.remove({ shipping: updated._id });
 

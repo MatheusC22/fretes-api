@@ -1,6 +1,7 @@
 const express = require("express");
 const Cargo = require("../models/Cargo");
 const Shipping = require("../models/Shipping");
+const axios = require("axios");
 
 const router = express.Router();
 /*return all cargo */
@@ -11,10 +12,23 @@ router.get("/all", async (req, res) => {
 /*registers cargo */
 router.post("/register", async (req, res) => {
   try {
-    const { shipping } = req.body;
+    const { shipping, recipientCep } = req.body;
     if (!(await Shipping.findById(shipping))) {
       return res.status(400).send({ error: "shipping does not exist!" });
     }
+    const { data } = await axios.get(
+      `https://viacep.com.br/ws/${recipientCep}/json/`
+    );
+    //verifica se a requisição nao retornou erro por cpf malformatado
+    if (data.erro == "true") {
+      return res.status(400).send({ error: "invalid zip code" });
+      //realiza uma requisição a uma api de CEPs e verifica se o uf retornado é = SP
+    } else if (data.uf != "SP" || data.erro == true) {
+      return res
+        .status(400)
+        .send({ error: "only valid zip codes from são Paulo" });
+    }
+
     const newCargo = await Cargo.create(req.body);
     const shipAtt = await Shipping.findById(shipping);
     shipAtt.cargo.push(newCargo);

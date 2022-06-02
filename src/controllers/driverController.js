@@ -11,10 +11,13 @@ router.get("/all", async (req, res) => {
 /*Registers driver*/
 router.post("/register", async (req, res) => {
   const { cpf } = req.body;
-
   try {
     if (await Driver.findOne({ cpf }))
       return res.status(400).send({ error: "driver already exists!" });
+    // verifica se o cpf envia não bate com o regex de cpf de São Paulo
+    if (!cpf.match(/[0-9]{8}8[0-9]{2}/i)) {
+      return res.status(400).send({ error: "valid only cpfs from São Paulo" });
+    }
 
     const driver = await Driver.create(req.body);
     return res.status(200).send({ driver });
@@ -46,7 +49,6 @@ router.put("/update/:_id", async (req, res) => {
 });
 /*Deletes driver By _id ->PASSAR ID POR PARAMS<-*/
 router.delete("/delete/:_id", async (req, res) => {
-
   try {
     const deleted = await Driver.findByIdAndDelete(req.params._id);
 
@@ -60,7 +62,6 @@ router.delete("/delete/:_id", async (req, res) => {
 });
 /*Find One by _id ->PASSAR ID POR PARAMS<-*/
 router.post("/get/:_id", async (req, res) => {
-
   if (!(await Driver.findById(req.params._id))) {
     return res.status(400).send({ error: "driver does not exist!" });
   }

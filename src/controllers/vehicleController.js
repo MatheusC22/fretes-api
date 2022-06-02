@@ -59,7 +59,6 @@ router.put("/update/:_id", async (req, res) => {
 });
 /**get a vehicle by id ->PASSAR ID POR PARAMS<- */
 router.get("/get/:_id", async (req, res) => {
-
   if (!(await Vehicle.findById(req.params._id))) {
     return res.status(400).send({ error: "Vehicle does not exists!" });
   }
