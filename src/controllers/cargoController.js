@@ -50,14 +50,37 @@ router.delete("/delete/:_id", async (req, res) => {
     return res.status(400).send({ error: err.message });
   }
 });
+
+// RETIRA A CARGO DO ATUAL FRETE
+router.get("/unload/:_id", async (req, res) => {
+  const id = req.params._id;
+
+  const exist = await Shipping.findOneAndUpdate(
+    { cargo: id },
+    { $pull: { cargo: id } },
+    { new: true }
+  );
+
+  return res.send({ exist });
+});
 /** update cargo by Id ->PASSAR ID POR PARAMS<- */
 router.put("/update/:_id", async (req, res) => {
   const { name, description, shipping, recipientCep } = req.body;
   try {
+    const id = req.params._id;
+    // RETIRA A CARGA DE SEU ANTIGO FRETE
+    if (shipping != null) {
+      await Shipping.findOneAndUpdate(
+        { cargo: id },
+        { $pull: { cargo: id } },
+        { new: true }
+      );
+    }
+
     if (!(await Cargo.findById(req.params._id))) {
       return res.status(400).send({ error: "Cargo does not exist!" });
     }
-
+    
     const updated = await Cargo.findByIdAndUpdate(
       req.params._id,
       {
@@ -68,6 +91,9 @@ router.put("/update/:_id", async (req, res) => {
       },
       { new: true }
     );
+    const shipAtt = await Shipping.findById(shipping);
+    shipAtt.cargo.push(updated);
+    await shipAtt.save();
     return res.status(200).send({ updated });
   } catch (err) {
     return res.status(400).send({ error: err.message });
