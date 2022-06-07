@@ -41,10 +41,18 @@ router.post("/register", async (req, res) => {
 /** deletes cargo By id ->PASSAR ID POR PARAMS<- */
 router.delete("/delete/:_id", async (req, res) => {
   try {
+    const id = req.params._id;
+    //EXCLUI O REGISTRO DE CARGA
     const deleted = await Cargo.findByIdAndDelete(req.params._id);
     if (deleted == null) {
       return res.status(400).send({ error: "cargo does not exist!" });
     }
+    //RETIRA A CARGA DO ATUAL FRETE
+    await Shipping.findOneAndUpdate(
+      { cargo: id },
+      { $pull: { cargo: id } },
+      { new: true }
+    );
     return res.status(200).send({ deleted });
   } catch (err) {
     return res.status(400).send({ error: err.message });
