@@ -21,18 +21,20 @@ router.post("/register", async (req, res) => {
     const { driver, vehicle, description, cargo } = req.body;
 
     const created = await Shipping.create({ driver, vehicle, description });
+    
+    if (cargo != null) {
+      await Promise.all(
+        cargo.map(async (c) => {
+          const shipCargo = new Cargo({ ...c, shipping: created._id });
 
-    await Promise.all(
-      cargo.map(async (c) => {
-        const shipCargo = new Cargo({ ...c, shipping: created._id });
+          await shipCargo.save();
 
-        await shipCargo.save();
+          created.cargo.push(shipCargo);
+        })
+      );
+      await created.save();
+    }
 
-        created.cargo.push(shipCargo);
-      })
-    );
-
-    await created.save();
     return res.status(200).send({ created });
   } catch (err) {
     return res.status(400).send({ error: err.message });
@@ -89,7 +91,7 @@ router.get("/get/:_id", async (req, res) => {
     if (!(await Shipping.findById(req.params._id))) {
       return res.status(400).send({ error: "Shipping does not exist!" });
     }
-    const get = await Shipping.findById(req.params._id);
+    const get = await Shipping.findById(req.params._id).populate("cargo");
 
     return res.status(200).send({ get });
   } catch (err) {

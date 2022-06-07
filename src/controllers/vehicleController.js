@@ -12,7 +12,7 @@ router.post("/register", async (req, res) => {
   const { licensePlate } = req.body;
   try {
     if (await Vehicle.findOne({ licensePlate })) {
-      return res.status(400).send({ error: "vehicle already exists!" });
+      return res.status(400).send({ error: "licenseplate already registered!" });
     }
 
     const vehicle = await Vehicle.create(req.body);

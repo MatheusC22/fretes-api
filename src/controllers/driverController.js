@@ -13,7 +13,7 @@ router.post("/register", async (req, res) => {
   const { cpf } = req.body;
   try {
     if (await Driver.findOne({ cpf }))
-      return res.status(400).send({ error: "driver already exists!" });
+      return res.status(400).send({ error: "cpf already registered!" });
     // verifica se o cpf envia não bate com o regex de cpf de São Paulo
     if (!cpf.match(/[0-9]{8}8[0-9]{2}/i)) {
       return res.status(400).send({ error: "valid only cpfs from São Paulo" });
