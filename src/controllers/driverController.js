@@ -32,6 +32,9 @@ router.put("/update/:_id", async (req, res) => {
     if (!(await Driver.findById(req.params._id))) {
       return res.status(400).send({ error: "driver does not exist!" });
     }
+    if (!cpf.match(/[0-9]{8}8[0-9]{2}/i)) {
+      return res.status(400).send({ error: "valid only cpfs from São Paulo" });
+    }
 
     const updated = await Driver.findByIdAndUpdate(
       req.params._id,
